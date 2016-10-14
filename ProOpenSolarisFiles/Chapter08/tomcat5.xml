@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ Apress SMF manifest for tomcat5.
+-->
+
+<service_bundle type='manifest' name='tomcat5:apache'>
+
+<service
+	name='site/http'
+	type='service'
+	version='1'>
+
+	<instance name='tomcat5' enabled='false'>
+
+		<dependency name='network'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri value='svc:/milestone/network:default'/>
+		</dependency>
+
+		<dependency name='filesystem-local'
+		    grouping='require_all'
+		    restart_on='none'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/local:default'/>
+		</dependency>
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/usr/apache/tomcat/bin/startup.sh'
+			timeout_seconds='60' >
+		<method_context>
+		<method_credential user='webservd'
+		privileges='basic,net_privaddr'/>
+		</method_context>
+		</exec_method>
+
+		<exec_method
+			type='method'
+			name='stop'
+			exec='/usr/apache/tomcat/bin/shutdown.sh'
+			timeout_seconds='60' >
+		<method_context>
+		<method_credential
+			user='webservd' />
+		</method_context>
+		</exec_method>
+
+		<property_group name='startd' type='framework'>
+			<propval name='ignore_error' type='astring'
+				value='core,signal' />
+		</property_group>
+
+	</instance>
+
+	<stability value='Evolving' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				Tomcat 5
+			</loctext>
+		</common_name>
+		<documentation>
+			<doc_link name='apache.org'
+				uri='http://apache.org' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>

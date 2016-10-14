@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ SMF manifest for Subversion.
+-->
+
+<service_bundle type='manifest' name='subversion'>
+
+<service
+	name='site/subversion'
+	type='service'
+	version='1'>
+
+	<create_default_instance enabled='false' />
+	<single_instance />
+
+	<dependency name='network'
+	    grouping='require_all'
+	    restart_on='error'
+	    type='service'>
+	    <service_fmri value='svc:/milestone/network:default'/>
+	</dependency>
+
+	<dependency name='filesystem-local'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+	    <service_fmri
+		value='svc:/system/filesystem/local:default'/>
+	</dependency>
+
+	<dependency
+              name='repository'
+              grouping='require_all'
+              restart_on='restart'
+              type='path'>
+              <service_fmri
+                value='file://localhost/opt/svn/repo' />
+          </dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+		exec='/usr/bin/svnserve -d -r /opt/svn/repo'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':kill'
+		timeout_seconds='60' />
+
+	<stability value='Evolving' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				Subversion
+			</loctext>
+		</common_name>
+		<documentation>
+			<doc_link name='Subversion Book'
+				uri='http://svnbook.red-bean.com/' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>
